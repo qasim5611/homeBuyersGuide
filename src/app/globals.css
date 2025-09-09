@@ -24,3 +24,9 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.bg-custom-pic {
+  background-image: url("/web_lrg-bdc6abbb97221105646a.avif");
+  background-size: cover;
+  background-position: center;
+}
