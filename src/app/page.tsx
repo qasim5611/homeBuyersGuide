@@ -22,7 +22,7 @@ export default function Home() {
               <div className="flex-shrink-0">
                 <span className="text-blue-600 font-bold text-xl">
                   <img
-                    src={"/logo.png"}
+                    src={"/Logo.png"}
                     alt="Logo"
                     // className="h-[50px] w-[250px]"
                   />
