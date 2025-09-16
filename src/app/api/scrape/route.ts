@@ -1,11 +1,10 @@
 import puppeteer from "puppeteer";
-
+import { executablePath } from "puppeteer";
 export async function GET() {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath:
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      executablePath: executablePath(), // auto detects installed Chromium
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
