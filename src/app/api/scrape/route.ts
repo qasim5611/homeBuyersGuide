@@ -1,12 +1,20 @@
-import puppeteer from "puppeteer";
+// import puppeteer from "puppeteer";
+import chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
+
 import { executablePath } from "puppeteer";
 export async function GET() {
   try {
+    // const browser = await puppeteer.launch({
+    //   headless: true,
+    //   args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    // });
+
     const browser = await puppeteer.launch({
-      headless: true,
-      // executablePath:
-      //   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // auto detects installed Chromium
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath, // gets the right Chrome binary
+      headless: chromium.headless,
     });
 
     const page = await browser.newPage();
