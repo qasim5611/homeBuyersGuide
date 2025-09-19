@@ -4,7 +4,8 @@ export async function GET() {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: executablePath(), // auto detects installed Chromium
+      // executablePath:
+      //   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // auto detects installed Chromium
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
@@ -157,6 +158,11 @@ export async function GET() {
             ?.getAttribute("data-chart-data") || "",
       };
 
+      // Extract token from yip-charts
+      const yipChartsToken = document.querySelector("yip-charts")
+        ? document.querySelector("yip-charts")?.getAttribute("token") || ""
+        : "";
+
       return {
         breadcrumbs,
         heading,
@@ -166,6 +172,7 @@ export async function GET() {
         tabs,
         keyMarketData, // New keyMarketData
         keyDemographics, // New keyDemographics
+        yipChartsToken,
       };
     });
 

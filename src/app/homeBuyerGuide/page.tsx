@@ -1,6 +1,8 @@
 "use client";
-import Image from "next/image";
+
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Graph } from "@/components/MarketTrendsGraph";
 
 interface ScrapeData {
   breadcrumbs?: { name: string; link: string | null }[];
@@ -30,13 +32,13 @@ interface ScrapeData {
     value2011: string;
     value2016: string;
   }[];
+  yipChartsToken?: string;
   error?: string;
 }
 
 export default function VictoriaPoint() {
   const [data, setData] = useState<ScrapeData | null>(null);
   const [activeTab, setActiveTab] = useState(0); // 🔥 track which tab is open
-
   useEffect(() => {
     fetch("/api/scrape")
       .then((res) => res.json())
@@ -47,8 +49,20 @@ export default function VictoriaPoint() {
   if (!data) return <p>Loading...</p>;
   if (data.error) return <p className="text-red-500">Error: {data.error}</p>;
 
+  // Validate map link and image before rendering
+  const isValidURL = (url: string) => {
+    try {
+      new URL(url); // Check if the URL is valid
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  console.log("yipChartsToken_Token", data.yipChartsToken);
+  const token = data.yipChartsToken || "";
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">{data.heading}</h1>
       <p className="text-gray-700">{data.subheading}</p>
 
@@ -71,19 +85,48 @@ export default function VictoriaPoint() {
       )}
 
       {/* Map */}
-      {data.map?.image && (
+      {data?.map?.image &&
+      isValidURL(data.map.image) &&
+      data?.map?.link &&
+      isValidURL(data.map.link) ? (
         <div className="my-4">
-          <a href={data.map.link} target="_blank">
+          <a href={data.map.link} target="_blank" rel="noopener noreferrer">
             <Image
-              src={data.map?.image || ""}
+              src={data.map.image}
               alt="Map"
-              width={630}
-              height={290}
               className="rounded-lg border shadow-md"
+              width={800}
+              height={600}
             />
           </a>
         </div>
+      ) : (
+        <p>No valid map data available</p> // Fallback if there's no valid map data
       )}
+
+      {/* Sections */}
+      {data.sections?.map((section, idx) => (
+        <div key={idx} className="border-b pb-4 mb-4">
+          {section.title && (
+            <h2 className="text-xl font-semibold">{section.title}</h2>
+          )}
+          {section.text && <p className="text-gray-700">{section.text}</p>}
+          {section.image && (
+            <img
+              src={section.image}
+              alt={section.title}
+              className="rounded-md mt-2"
+            />
+          )}
+          {section.graph && (
+            <img
+              src={section.graph}
+              alt={`${section.title} graph`}
+              className="rounded-md mt-2"
+            />
+          )}
+        </div>
+      ))}
 
       {/* Tabs */}
       {data.tabs && data.tabs.length > 0 && (
@@ -190,6 +233,8 @@ export default function VictoriaPoint() {
           </table>
         </div>
       )}
+
+      <Graph Token={token} />
     </div>
   );
 }
