@@ -1,190 +1,109 @@
-import puppeteer from "puppeteer";
-import { executablePath } from "puppeteer";
+import * as cheerio from "cheerio";
+import axios from "axios";
+
 export async function GET() {
   try {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    const url =
+      "https://www.yourinvestmentpropertymag.com.au/top-suburbs/wa/6101-east-victoria-park";
+
+    // Fetch HTML
+    const { data: html } = await axios.get(url, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+      },
     });
 
-    const page = await browser.newPage();
+    const $ = cheerio.load(html);
 
-    // Disable images and CSS files
-    await page.setRequestInterception(true);
-    page.on("request", (request) => {
-      const resourceType = request.resourceType();
-      if (
-        resourceType === "image" ||
-        resourceType === "stylesheet" ||
-        resourceType === "font"
-      ) {
-        request.abort(); // Block images, CSS, and fonts
-      } else {
-        request.continue(); // Allow other requests (HTML, JavaScript)
-      }
-    });
-
-    await page.goto(
-      "https://www.yourinvestmentpropertymag.com.au/top-suburbs/wa/6101-east-victoria-park",
-      { waitUntil: "domcontentloaded", timeout: 60000 }
-    );
-
-    // ✅ Extract structured data
-    const data = await page.evaluate(() => {
-      // Breadcrumbs
-      const breadcrumbs = Array.from(
-        document.querySelectorAll(
-          "#breadcrumbs span[itemprop='itemListElement']"
-        )
-      ).map((el) => {
-        const link = el.querySelector("a");
+    // Breadcrumbs
+    const breadcrumbs = $("#breadcrumbs span[itemprop='itemListElement']")
+      .map((_, el) => {
+        const link = $(el).find("a").attr("href") || null;
         return {
-          name:
-            el.querySelector("[itemprop='name']")?.textContent?.trim() || "",
-          link: link ? link.getAttribute("href") : null,
+          name: $(el).find("[itemprop='name']").text().trim(),
+          link,
         };
-      });
+      })
+      .get();
 
-      // Heading and description
-      const heading = document.querySelector("h1")?.textContent?.trim() || "";
-      const subheading =
-        document
-          .querySelector(".banner-content p:not(#breadcrumbs)")
-          ?.textContent?.trim() || "";
+    // Heading + Subheading
+    const heading = $("h1").first().text().trim();
+    const subheading = $(".banner-content p:not(#breadcrumbs)")
+      .first()
+      .text()
+      .trim();
 
-      // Map
-      const mapLink =
-        document.querySelector(".expand-map")?.getAttribute("href") || "";
-      const mapImage =
-        document.querySelector(".image-map")?.getAttribute("src") || "";
+    // Map
+    const mapLink = $(".expand-map").attr("href") || "";
+    const mapImage = $(".image-map").attr("src") || "";
 
-      // Sections
-      const sections = Array.from(
-        document.querySelectorAll(".content-section")
-      ).map((section) => ({
-        title: section.querySelector("h2,h3")?.textContent?.trim() || "",
-        text: section.querySelector("p")?.textContent?.trim() || "",
-        image: section.querySelector("img")?.getAttribute("src") || "",
-        graph:
-          section
-            .querySelector("canvas, svg, img.graph")
-            ?.getAttribute("src") || "",
-      }));
+    // Sections
+    const sections = $(".content-section")
+      .map((_, section) => ({
+        title: $(section).find("h2,h3").text().trim(),
+        text: $(section).find("p").text().trim(),
+        image: $(section).find("img").attr("src") || "",
+        graph: $(section).find("canvas, svg, img.graph").attr("src") || "",
+      }))
+      .get();
 
-      // ✅ Tabs (House report / Unit report / Expert report)
-      const tabs = Array.from(document.querySelectorAll("#pills-tab li a"))
-        .slice(0, 2)
-        .map((tab) => {
-          const title = tab.textContent?.trim() || "";
-          const targetId = tab.getAttribute("data-bs-target");
-          const contentEl = targetId ? document.querySelector(targetId) : null;
-          return {
-            title,
-            content: contentEl ? contentEl.innerHTML.trim() : "",
-          };
-        });
+    // Tabs
+    const tabs = $("#pills-tab li a")
+      .slice(0, 2)
+      .map((_, tab) => {
+        const title = $(tab).text().trim();
+        const targetId = $(tab).attr("data-bs-target");
+        const contentEl = targetId ? $(targetId).html()?.trim() : "";
+        return { title, content: contentEl || "" };
+      })
+      .get();
 
-      // ✅ Extracting Key Market Data Table
-      const keyMarketData = Array.from(
-        document.querySelectorAll(".key-market-data table tbody tr")
-      ).map((row) => {
-        const cells = row.querySelectorAll("td");
+    // Key Market Data Table
+    const keyMarketData = $(".key-market-data table tbody tr")
+      .map((_, row) => {
+        const cells = $(row).find("td");
         return {
-          label: cells[0]?.textContent?.trim() || "",
-          house: cells[1]?.textContent?.trim() || "",
-          unit: cells[2]?.textContent?.trim() || "",
+          label: $(cells[0]).text().trim(),
+          house: $(cells[1]).text().trim(),
+          unit: $(cells[2]).text().trim(),
         };
-      });
+      })
+      .get();
 
-      // ✅ Extracting Key Demographics Table
-      const keyDemographics = Array.from(
-        document.querySelectorAll(".key-demographics table tbody tr")
-      ).map((row) => {
-        const cells = row.querySelectorAll("td");
+    // Key Demographics Table
+    const keyDemographics = $(".key-demographics table tbody tr")
+      .map((_, row) => {
+        const cells = $(row).find("td");
         return {
-          label: cells[0]?.textContent?.trim() || "",
-          value2011: cells[1]?.textContent?.trim() || "",
-          value2016: cells[2]?.textContent?.trim() || "",
+          label: $(cells[0]).text().trim(),
+          value2011: $(cells[1]).text().trim(),
+          value2016: $(cells[2]).text().trim(),
         };
-      });
+      })
+      .get();
 
-      // ✅ Scraping data for Median Value Graph
-      const medianValueGraphs = {
-        oneYear:
-          document
-            .querySelector(".metric-chart.chart-1-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-        fiveYears:
-          document
-            .querySelector(".metric-chart.chart-5-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-        tenYears:
-          document
-            .querySelector(".metric-chart.chart-10-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-      };
+    // Extract token
+    const yipChartsToken = $("yip-charts").attr("token") || "";
 
-      // ✅ Scraping data for Median Growth Graph
-      const medianGrowthGraphs = {
-        oneYear:
-          document
-            .querySelector(".metric-chart.chart-1-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-        fiveYears:
-          document
-            .querySelector(".metric-chart.chart-5-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-        tenYears:
-          document
-            .querySelector(".metric-chart.chart-10-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-      };
+    const result = {
+      breadcrumbs,
+      heading,
+      subheading,
+      map: { link: mapLink, image: mapImage },
+      sections,
+      tabs,
+      keyMarketData,
+      keyDemographics,
+      yipChartsToken,
+    };
 
-      // ✅ Scraping data for Number of Sales Graph
-      const numberOfSalesGraphs = {
-        oneYear:
-          document
-            .querySelector(".metric-chart.chart-1-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-        fiveYears:
-          document
-            .querySelector(".metric-chart.chart-5-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-        tenYears:
-          document
-            .querySelector(".metric-chart.chart-10-years canvas")
-            ?.getAttribute("data-chart-data") || "",
-      };
-
-      // Extract token from yip-charts
-      const yipChartsToken = document.querySelector("yip-charts")
-        ? document.querySelector("yip-charts")?.getAttribute("token") || ""
-        : "";
-
-      return {
-        breadcrumbs,
-        heading,
-        subheading,
-        map: { link: mapLink, image: mapImage },
-        sections,
-        tabs,
-        keyMarketData, // New keyMarketData
-        keyDemographics, // New keyDemographics
-        yipChartsToken,
-      };
-    });
-
-    await browser.close();
-
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "An unknown error occurred";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-    });
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return new Response(JSON.stringify({ error: message }), { status: 500 });
   }
 }
