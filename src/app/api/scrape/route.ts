@@ -1,17 +1,12 @@
-import puppeteer from "puppeteer-core";
-import chromium from "chrome-aws-lambda"; // Import chrome-aws-lambda
+import puppeteer from "puppeteer";
+import { executablePath } from "puppeteer";
 export async function GET() {
   try {
     const browser = await puppeteer.launch({
-      // headless: true,
-      // executablePath:
-      //   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // auto detects installed Chromium
-      // args: ["--no-sandbox", "--disable-setuid-sandbox"],
-
-      headless: true, // Ensure headless mode is on
-      args: chromium.args, // Set the arguments for AWS Lambda
-      defaultViewport: chromium.defaultViewport, // Use default viewport for cloud environments
-      executablePath: await chromium.executablePath, // Get executable path from chrome-aws-lambda
+      headless: true,
+      executablePath:
+        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // auto detects installed Chromium
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     const page = await browser.newPage();
