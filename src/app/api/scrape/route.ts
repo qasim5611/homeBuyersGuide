@@ -4,8 +4,9 @@ export async function GET() {
   try {
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath:
-        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // auto detects installed Chromium
+      executablePath: "/usr/bin/chromium-browser", // use system Chrome
+      // executablePath:
+      //   "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // auto detects installed Chromium
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
