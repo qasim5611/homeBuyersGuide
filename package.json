@@ -12,12 +12,15 @@
     "axios": "^1.12.1",
     "chart.js": "^4.5.0",
     "chrome-aws-lambda": "^10.1.0",
+    "flowbite": "^3.1.2",
+    "flowbite-react": "^0.12.9",
     "next": "15.5.2",
     "puppeteer": "^24.20.0",
     "puppeteer-core": "^10.4.0",
     "react": "19.1.0",
     "react-chartjs-2": "^5.3.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "request-promise": "^4.2.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
