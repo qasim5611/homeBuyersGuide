@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Graph } from "@/components/MarketTrendsGraph";
-
+import LeafletMap from "@/components/LeafletMap";
 interface ScrapeData {
   breadcrumbs?: { name: string; link: string | null }[];
   heading?: string;
@@ -11,6 +11,7 @@ interface ScrapeData {
   map?: {
     link: string;
     image: string;
+    svg?: string;
   };
   sections?: {
     title: string;
@@ -49,8 +50,10 @@ export default function VictoriaPoint() {
   if (!data) return <p>Loading...</p>;
   if (data.error) return <p className="text-red-500">Error: {data.error}</p>;
 
+  console.log("Big Data", data);
   // Validate map link and image before rendering
   const isValidURL = (url: string) => {
+    console.log("url", url);
     try {
       new URL(url); // Check if the URL is valid
       return true;
@@ -61,6 +64,9 @@ export default function VictoriaPoint() {
 
   console.log("yipChartsToken_Token", data.yipChartsToken);
   const token = data.yipChartsToken || "";
+
+  console.log("data.map", data.map);
+
   return (
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">{data.heading}</h1>
@@ -85,23 +91,10 @@ export default function VictoriaPoint() {
       )}
 
       {/* Map */}
-      {data?.map?.image &&
-      isValidURL(data.map.image) &&
-      data?.map?.link &&
-      isValidURL(data.map.link) ? (
-        <div className="my-4">
-          <a href={data.map.link} target="_blank" rel="noopener noreferrer">
-            <Image
-              src={data.map.image}
-              alt="Map"
-              className="rounded-lg border shadow-md"
-              width={800}
-              height={600}
-            />
-          </a>
-        </div>
+      {data.heading ? (
+        <LeafletMap address={data.heading + " Australia"} />
       ) : (
-        <p>No valid map data available</p> // Fallback if there's no valid map data
+        "Loading..."
       )}
 
       {/* Sections */}

@@ -4,7 +4,7 @@ import axios from "axios";
 export async function GET() {
   try {
     const url =
-      "https://www.yourinvestmentpropertymag.com.au/top-suburbs/wa/6101-east-victoria-park";
+      "https://www.yourinvestmentpropertymag.com.au/top-suburbs/vic/3714-acheron";
 
     // Fetch HTML
     const { data: html } = await axios.get(url, {
@@ -34,9 +34,20 @@ export async function GET() {
       .text()
       .trim();
 
-    // Map
-    const mapLink = $(".expand-map").attr("href") || "";
-    const mapImage = $(".image-map").attr("src") || "";
+    // Map Data
+    const mapLink = $(".yipca-map a.expand-map").attr("href");
+    $(".yipca-map").eq(1).find("a.expand-map svg").html();
+    const mapImage = $(".yipca-map img.image-map").attr("src");
+    const svgMap = $(".yipca-map a.expand-map").html(); // Extract SVG HTML
+    // const svgMap = $(".yipca-map").eq(1).html();
+    // const svgMap = $(".yipca-map a.expand-map svg")[0].outerHTML;
+
+    // Debugging log to inspect map data
+    console.log("Map Link:", mapLink); // Should show the map link if it's present
+    console.log("Map Image:", mapImage); // Should show the map image if it's present
+    console.log("SVG Map:", svgMap);
+
+    console.log("Full Map HTML:", $(".yipca-map").html()); // Inspect entire map section
 
     // Sections
     const sections = $(".content-section")
@@ -90,7 +101,7 @@ export async function GET() {
       breadcrumbs,
       heading,
       subheading,
-      map: { link: mapLink, image: mapImage },
+      map: { link: mapLink, image: mapImage, svg: svgMap },
       sections,
       tabs,
       keyMarketData,
