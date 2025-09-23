@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Graph } from "@/components/MarketTrendsGraph";
-import LeafletMap from "@/components/LeafletMap";
+import dynamic from "next/dynamic";
+
+// import LeafletMap from "@/components/LeafletMap";
+
+const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
+  ssr: false, // Disable server-side rendering for this component
+});
 interface ScrapeData {
   breadcrumbs?: { name: string; link: string | null }[];
   heading?: string;
