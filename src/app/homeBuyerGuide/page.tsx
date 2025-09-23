@@ -1,11 +1,8 @@
-"use client";
+"use client"; // Ensure this is added at the top of the file
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Graph } from "@/components/MarketTrendsGraph";
+import { useRouter } from "next/router"; // Import useRouter to access query params
 import dynamic from "next/dynamic";
-
-// import LeafletMap from "@/components/LeafletMap";
 
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
   ssr: false, // Disable server-side rendering for this component
@@ -46,11 +43,18 @@ interface ScrapeData {
 export default function VictoriaPoint() {
   const [data, setData] = useState<ScrapeData | null>(null);
   const [activeTab, setActiveTab] = useState(0); // 🔥 track which tab is open
+
+  const router = useRouter();
+  const { address } = router.query;
+
   useEffect(() => {
-    fetch("/api/scrape")
-      .then((res) => res.json())
-      .then((json) => setData(json))
-      .catch((err) => setData({ error: err.message }));
+    if (address) {
+      // Fetch data based on the formatted URL passed as 'address'
+      fetch(`/api/scrape?address=${address}`)
+        .then((res) => res.json())
+        .then((json) => setData(json))
+        .catch((err) => setData({ error: err.message }));
+    }
   }, []);
 
   if (!data) return <p>Loading...</p>;
@@ -58,15 +62,6 @@ export default function VictoriaPoint() {
 
   console.log("Big Data", data);
   // Validate map link and image before rendering
-  const isValidURL = (url: string) => {
-    console.log("url", url);
-    try {
-      new URL(url); // Check if the URL is valid
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
 
   console.log("yipChartsToken_Token", data.yipChartsToken);
   const token = data.yipChartsToken || "";

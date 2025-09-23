@@ -1,13 +1,26 @@
 import * as cheerio from "cheerio";
 import axios from "axios";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const url =
-      "https://www.yourinvestmentpropertymag.com.au/top-suburbs/vic/3714-acheron";
+    // const url =
+    //   "https://www.yourinvestmentpropertymag.com.au/top-suburbs/vic/3714-acheron";
+    // https://www.yourinvestmentpropertymag.com.au/top-suburbs/wa/6101-east-victoria-park
+
+    const url = new URL(req.url!);
+    const address = url.searchParams.get("address");
+
+    if (!address) {
+      return new Response(JSON.stringify({ error: "Address is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const scrapingUrl = `https://www.yourinvestmentpropertymag.com.au/top-suburbs/${address}`;
 
     // Fetch HTML
-    const { data: html } = await axios.get(url, {
+    const { data: html } = await axios.get(scrapingUrl, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
