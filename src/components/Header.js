@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 export function Header(props) {
@@ -13,11 +14,13 @@ export function Header(props) {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <span className="text-blue-600 font-bold text-xl">
-                  <img
-                    src={"/Logo.png"}
-                    alt="Logo"
-                    className="h-[50px] w-[250px]"
-                  />
+                  <Link href="/">
+                    <img
+                      src={"/Logo.png"}
+                      alt="Logo"
+                      className="h-[50px] w-[250px]"
+                    />
+                  </Link>
                 </span>
               </div>
             </div>

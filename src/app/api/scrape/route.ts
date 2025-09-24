@@ -17,8 +17,10 @@ export async function GET(req: Request) {
       });
     }
 
-    const scrapingUrl = `https://www.yourinvestmentpropertymag.com.au/top-suburbs/${address}`;
+    console.log("Server_address", address);
 
+    const scrapingUrl = `https://www.yourinvestmentpropertymag.com.au/top-suburbs/${address}`;
+    console.log("scrapingUrl", scrapingUrl);
     // Fetch HTML
     const { data: html } = await axios.get(scrapingUrl, {
       headers: {

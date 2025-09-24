@@ -1,7 +1,7 @@
-"use client"; // Ensure this is added at the top of the file
-
+"use client"; // Ensure this line is at the very top
+import { MarketTrendsGraph } from "@/components/MarketTrendsGraph";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router"; // Import useRouter to access query params
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
@@ -42,31 +42,33 @@ interface ScrapeData {
 
 export default function VictoriaPoint() {
   const [data, setData] = useState<ScrapeData | null>(null);
+  const [address, setAddress] = useState<string | undefined>(undefined); // Add a state to store the address
   const [activeTab, setActiveTab] = useState(0); // 🔥 track which tab is open
 
-  const router = useRouter();
-  const { address } = router.query;
+  const searchParams = useSearchParams();
 
   useEffect(() => {
+    const addressQuery = searchParams.get("address");
+    if (addressQuery) {
+      setAddress(addressQuery);
+    }
+  }, [searchParams]);
+  useEffect(() => {
     if (address) {
-      // Fetch data based on the formatted URL passed as 'address'
+      // Fetch data from the API with the address once it's set
       fetch(`/api/scrape?address=${address}`)
         .then((res) => res.json())
         .then((json) => setData(json))
         .catch((err) => setData({ error: err.message }));
     }
-  }, []);
+  }, [address]); // Fetch when address changes
 
   if (!data) return <p>Loading...</p>;
-  if (data.error) return <p className="text-red-500">Error: {data.error}</p>;
-
-  console.log("Big Data", data);
-  // Validate map link and image before rendering
 
   console.log("yipChartsToken_Token", data.yipChartsToken);
   const token = data.yipChartsToken || "";
 
-  console.log("data.map", data.map);
+  console.log("yipChartsToken_Token", token);
 
   return (
     <div className="p-6 space-y-4">
@@ -228,7 +230,7 @@ export default function VictoriaPoint() {
         </div>
       )}
 
-      <Graph Token={token} />
+      <MarketTrendsGraph Token={token} />
     </div>
   );
 }

@@ -26,7 +26,7 @@ ChartJS.register(
 interface GraphProps {
   Token: string; // Specify the type of Token (string)
 }
-export function Graph(Token: GraphProps) {
+export function MarketTrendsGraph(Token: GraphProps) {
   // const [graphData, setGraphData] = useState < any > null;
   const [graphData, setGraphData] = useState<any>({ labels: [], datasets: [] });
 
@@ -69,7 +69,7 @@ export function Graph(Token: GraphProps) {
     axios
       .request(config)
       .then((response) => {
-        console.log(response.data);
+        console.log("Graph_API_Responce", response.data);
         // Process the response data into the format needed for the chart
         const graphResponse = response.data.seriesResponseList;
         const chartData = {
@@ -103,7 +103,7 @@ export function Graph(Token: GraphProps) {
   }, []);
 
   if (!graphData) return <p>Loading graph...</p>;
-
+  console.log("graphData", graphData);
   return (
     <div>
       <h3>Median Sale Price Graph</h3>

@@ -3,20 +3,20 @@
 import { useState } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic"; // Import dynamic
-
+// Sample array of addresses (ArrayCodes)
+import ArrayCodes from "../utils/AllAustralianCodes";
+import Link from "next/link";
 // Dynamically import Autocomplete with ssr: false to ensure it is only rendered on the client side
-const Autocomplete = dynamic(() => import("@mui/material/Autocomplete"), {
-  ssr: false,
-});
+// const Autocomplete = dynamic(() => import("@mui/material/Autocomplete"), {
+//   ssr: false,
+// });
+import Autocomplete from "@mui/material/Autocomplete";
+import { createFilterOptions } from "@mui/material/Autocomplete";
 const TextField = dynamic(() => import("@mui/material/TextField"), {
   ssr: false,
 });
 const Chip = dynamic(() => import("@mui/material/Chip"), { ssr: false });
 const Stack = dynamic(() => import("@mui/material/Stack"), { ssr: false });
-
-// Sample array of addresses (ArrayCodes)
-import ArrayCodes from "../utils/AllAustralianCodes";
-import Link from "next/link";
 
 // Function to convert address to URL format
 const formatAddressToUrl = (address: string) => {
@@ -33,6 +33,10 @@ const formatAddressToUrl = (address: string) => {
 };
 
 export default function Home() {
+  const filterOptions = createFilterOptions<string>({
+    limit: 50, // show max 50 results
+  });
+
   const [activeTab, setActiveTab] = useState("buy");
   const [activeExploreTab, setActiveExploreTab] = useState("buying");
   const [maplist, setmaplist] = useState<{ raw: string; formatted: string }[]>(
@@ -79,11 +83,12 @@ export default function Home() {
             {/* Search Box */}
             <div className="flex flex-col md:flex-row gap-2 max-w-2xl mx-auto items-center justify-center">
               <Stack spacing={3} sx={{ width: "60%" }}>
-                <Autocomplete
+                <Autocomplete<string, true, false, true>
                   sx={{ color: "black" }}
                   multiple
                   id="tags-filled"
                   options={ArrayCodes}
+                  filterOptions={filterOptions}
                   freeSolo
                   onChange={(event, value) => onChangeHandlerMap(value)}
                   renderTags={(value, getTagProps) =>
