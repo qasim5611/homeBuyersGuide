@@ -1,14 +1,10 @@
-// src/pages/api/market-trends.ts
-import type { NextApiRequest, NextApiResponse } from "next";
-import axios from "axios";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function POST(req: NextRequest) {
   try {
-    const { token } = req.body; // frontend sends the token
-    const data = {
+    const { token } = await req.json();
+
+    const payload = {
       seriesRequestList: [
         {
           interval: 12,
@@ -31,21 +27,27 @@ export default async function handler(
       ],
     };
 
-    const response = await axios.post(
+    const res = await fetch(
       "https://api.corelogic.asia/statistics/v1/statistics.json",
-      data,
       {
+        method: "POST",
         headers: {
-          accept: "application/json",
-          "content-type": "application/json;charset=UTF-8",
-          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json;charset=UTF-8",
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
         },
+        body: JSON.stringify(payload),
       }
     );
 
-    res.status(200).json(response.data);
+    if (!res.ok) {
+      throw new Error(`CoreLogic API error: ${res.status} ${res.statusText}`);
+    }
+
+    const data = await res.json();
+
+    return NextResponse.json(data);
   } catch (error: any) {
-    console.error("API Error", error.response?.data || error.message);
-    res.status(500).json({ error: error.message });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

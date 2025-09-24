@@ -12,7 +12,7 @@ import {
   Legend,
 } from "chart.js";
 
-// Register the necessary Chart.js components
+// Register chart.js modules
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,54 +24,20 @@ ChartJS.register(
 );
 
 interface GraphProps {
-  Token: string; // Specify the type of Token (string)
+  Token: string;
 }
-export function MarketTrendsGraph(Token: GraphProps) {
-  // const [graphData, setGraphData] = useState < any > null;
-  const [graphData, setGraphData] = useState<any>({ labels: [], datasets: [] });
+
+export function Graph({ Token }: GraphProps) {
+  const [graphData, setGraphData] = useState<any>(null);
 
   useEffect(() => {
-    const data = {
-      seriesRequestList: [
-        {
-          interval: 12,
-          fromDate: "2015-01-01",
-          toDate: "2025-12-31",
-          locationId: "9167",
-          locationTypeId: 8,
-          metricTypeId: 21,
-          propertyTypeId: 1,
-        },
-        {
-          interval: 12,
-          fromDate: "2015-01-01",
-          toDate: "2025-12-31",
-          locationId: "9167",
-          locationTypeId: 8,
-          metricTypeId: 21,
-          propertyTypeId: 2,
-        },
-      ],
-    };
-    console.log("Token at Graphs", Token.Token);
-    const config = {
-      method: "post",
-      url: "https://api.corelogic.asia/statistics/v1/statistics.json",
-      headers: {
-        accept: "application/json",
-        // "accept-encoding": "gzip, deflate, br, zstd",
-        "content-type": "application/json;charset=UTF-8",
-        authorization: `Bearer ${Token.Token}`,
-      },
-      data: data,
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        console.log("Graph_API_Responce", response.data);
-        // Process the response data into the format needed for the chart
+    const fetchGraphData = async () => {
+      try {
+        const response = await axios.post("/api/marketGraph", { token: Token });
         const graphResponse = response.data.seriesResponseList;
+
+        console.log("graphResponse", graphResponse);
+
         const chartData = {
           labels: graphResponse[0].seriesDataList.map(
             (data: any) => data.dateTime
@@ -95,18 +61,21 @@ export function MarketTrendsGraph(Token: GraphProps) {
             },
           ],
         };
+
         setGraphData(chartData);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+      } catch (error) {
+        console.error("Frontend fetch error:", error);
+      }
+    };
+
+    fetchGraphData();
+  }, [Token]);
 
   if (!graphData) return <p>Loading graph...</p>;
-  console.log("graphData", graphData);
+
   return (
     <div>
-      <h3>Median Sale Price Graph</h3>
+      <h3 className="text-[#3d3b40]">Median Sale Price Graph</h3>
       <Line data={graphData} />
     </div>
   );

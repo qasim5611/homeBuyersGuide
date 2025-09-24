@@ -27,7 +27,7 @@ const LeafletMap = ({ address }) => {
 
   return (
     // <a href={`https://www.google.com/maps/search/?q=${address}`}>
-    <div style={{ width: "100%", height: "500px" }}>
+    <div style={{ width: "100%", height: "300px" }}>
       {coordinates ? (
         <MapContainer
           center={coordinates}
@@ -65,7 +65,7 @@ const LeafletMap = ({ address }) => {
         Open in OpenStreetMap
       </a>
     </div>
-    // </a>
+    // </a>git
   );
 };
 

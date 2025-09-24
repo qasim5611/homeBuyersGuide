@@ -28,3 +28,20 @@ body {
 /* .css-rgq2ml-MuiAutocomplete-root .MuiFilledInput-root {
   padding-top: 14px !important;
 } */
+.bg-custom-pic {
+  background-image: url("/web_lrg-bdc6abbb97221105646a.avif");
+  background-size: cover;
+  background-position: center;
+}
+
+table,
+thead,
+tr,
+th,
+td {
+  border: 1px #e5e3e8 solid !important;
+}
+
+th {
+  color: #3d3b40 !important;
+}
