@@ -30,8 +30,8 @@ const LeafletMap = ({ address }) => {
     <div style={{ width: "100%", height: "300px" }}>
       {coordinates ? (
         <MapContainer
-          center={coordinates}
-          zoom={13}
+          center={coordinates || [-31.9523, 115.8613]}
+          zoom={coordinates ? 13 : 2}
           style={{ width: "100%", height: "100%" }}
           scrollWheelZoom={true}
         >
@@ -52,7 +52,7 @@ const LeafletMap = ({ address }) => {
           </Marker>
         </MapContainer>
       ) : (
-        <p>Loading map...</p>
+        <p className="animate-pulse h-[300px] w-full bg-gray-200">&nbsp;</p>
       )}
       <a
         href={`https://www.openstreetmap.org/search?query=${encodeURIComponent(

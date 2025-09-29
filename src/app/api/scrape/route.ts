@@ -124,6 +124,8 @@ export async function GET(req: Request) {
       yipChartsToken,
     };
 
+    console.log("result", result);
+
     return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },

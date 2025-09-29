@@ -64,7 +64,59 @@ export default function VictoriaPoint() {
     }
   }, [address]); // Fetch when address changes
 
-  if (!data) return <p>Loading...</p>;
+  if (!data)
+    return (
+      <>
+        <div className="p-6 space-y-4">
+          <div className="text-sm bg-gray-200 flex gap-2 animate-pulse w-100 h-4"></div>
+          <div className="bg-gray-300 animate-pulse min-h-[300px]"></div>
+          <br />
+          <br />
+          <div className="lg:w-1/2 mx-auto">
+            <h1 className="text-2xl font-bold text-[#3d3b40] font-montserrat bg-gray-300 animate-pulse h-[32px] w-50">
+              &nbsp;
+            </h1>
+            <p className="text-gray-700 text-[#3d3b40] bg-gray-300 animate-pulse min-h-[40px] mt-[8px]">
+              &nbsp;
+            </p>
+            <div>
+              <div className="flex border-b border-gray-200">
+                <button className="px-4 py-2 -mb-px text-sm font-medium border-b-2 border-transparent text-[#3d3b40] cursor-default">
+                  &nbsp;
+                </button>
+                <button className="px-4 py-2 -mb-px text-sm font-medium border-b-2 border-transparent text-[#3d3b40] hover:text-gray-700 hover:border-gray-300 cursor-pointer">
+                  &nbsp;
+                </button>
+              </div>
+              <div className="mt-4 p-4 border border-[#e5e3e8] rounded-md bg-gray-50 text-[#3d3b40d9]">
+                <div className="prose max-w-none bg-gray-300 animate-pulse min-h-[178px]">
+                  &nbsp;
+                </div>
+              </div>
+            </div>
+            <div className="my-6">
+              <h2 className="text-xl font-semibold text-[#3d3b40] animate-pulse min-h-[20px] bg-gray-300 w-60">
+                &nbsp;
+              </h2>
+              <table className="min-w-full mt-4 table-auto border-collapse border border-[#E5E3E8] bg-gray-300 animate-pulse min-h-[370px]">
+                &nbsp;
+              </table>
+            </div>
+            <div className="my-6">
+              <h2 className="text-xl font-semibold text-[#3d3b40]  animate-pulse min-h-[20px] bg-gray-300 w-60">
+                &nbsp;
+              </h2>
+              <table className="min-w-full mt-4 table-auto border-collapse bg-gray-300 animate-pulse min-h-[247px]">
+                &nbsp;
+              </table>
+            </div>
+            <div>
+              <h3 className="text-[#3d3b40]">Median Sale Price Graph</h3>
+            </div>
+          </div>
+        </div>
+      </>
+    );
 
   console.log("yipChartsToken_Token", data.yipChartsToken);
   const token = data.yipChartsToken || "";
