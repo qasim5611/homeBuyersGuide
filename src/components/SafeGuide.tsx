@@ -1,5 +1,7 @@
 "use client"; // Ensure this line is at the very top
-import { Graph } from "@/components/MarketTrendsGraph";
+import { MarketTrendsGraph } from "@/components/MarketTrendsGraph";
+import { RentalTrendsGraph } from "@/components/RentalTrendsGraph";
+
 import { useEffect, useState } from "react";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -295,7 +297,9 @@ export default function VictoriaPoint() {
           </div>
         )}
 
-        <Graph Token={token} />
+        <MarketTrendsGraph Token={token} />
+        <RentalTrendsGraph Token={token} />
+        {/* Median Sale Price Graph */}
       </div>
     </div>
   );

@@ -27,7 +27,7 @@ interface GraphProps {
   Token: string;
 }
 
-export function MarketTrendsGraph({ Token }: GraphProps) {
+export function RentalTrendsGraph({ Token }: GraphProps) {
   const [graphData, setGraphData] = useState<any>(null);
 
   useEffect(() => {
