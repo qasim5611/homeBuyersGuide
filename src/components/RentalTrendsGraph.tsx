@@ -33,7 +33,7 @@ export function RentalTrendsGraph({ Token }: GraphProps) {
   useEffect(() => {
     const fetchGraphData = async () => {
       try {
-        const response = await axios.post("/api/marketGraph", { token: Token });
+        const response = await axios.post("/api/rentalGraph", { token: Token });
         const graphResponse = response.data.seriesResponseList;
 
         console.log("graphResponse", graphResponse);

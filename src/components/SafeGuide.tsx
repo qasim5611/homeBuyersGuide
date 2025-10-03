@@ -40,6 +40,8 @@ interface ScrapeData {
     value2016: string;
   }[];
   yipChartsToken?: string;
+  localityID?: string;
+
   error?: string;
 }
 
@@ -120,10 +122,13 @@ export default function VictoriaPoint() {
       </>
     );
 
-  console.log("yipChartsToken_Token", data.yipChartsToken);
   const token = data.yipChartsToken || "";
+  const localityID = data.localityID || "";
 
-  console.log("yipChartsToken_Token", token);
+  // const token = data.yipChartsToken || "";
+
+  console.log("yipChartsToken_ALL", data);
+  console.log("tokentokentoken", token);
 
   return (
     <div className="p-6 space-y-4">
@@ -297,9 +302,163 @@ export default function VictoriaPoint() {
           </div>
         )}
 
-        <MarketTrendsGraph Token={token} />
-        <RentalTrendsGraph Token={token} />
+        <h2 className="text-xl font-semibold text-[#3d3b40]">Market Trends</h2>
+        <h2>Median Value (10 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2015-01-01"
+          toDate="2025-12-31"
+          metricTypeId="21"
+        />
+
+        <h2>Median Value (5 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2020-01-01"
+          toDate="2025-12-31"
+          metricTypeId="21"
+        />
+
+        <h2>Median Value (1 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="1"
+          fromDate="2023-01-01"
+          toDate="2025-12-31"
+          metricTypeId="21"
+        />
+
+        {/* ////////////////////////////////////////////////// */}
+
+        <h2>Median Growth (10 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2015-01-01"
+          toDate="2025-12-31"
+          metricTypeId="69"
+        />
+
+        <h2>Median Growth (5 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2020-01-01"
+          toDate="2025-12-31"
+          metricTypeId="69"
+        />
+
+        <h2>Median Growth (1 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="1"
+          fromDate="2023-01-01"
+          toDate="2025-12-31"
+          metricTypeId="69"
+        />
+
+        {/* ////////////////////////////////////////////////// */}
+
+        <h2>Number Of Sales (10 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2015-01-01"
+          toDate="2025-12-31"
+          metricTypeId="37"
+        />
+
+        <h2>Number Of Sales(5 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2020-01-01"
+          toDate="2025-12-31"
+          metricTypeId="37"
+        />
+
+        <h2>Number Of Sales (1 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="1"
+          fromDate="2023-01-01"
+          toDate="2025-12-31"
+          metricTypeId="37"
+        />
+        {/* <RentalTrendsGraph Token={token} /> */}
         {/* Median Sale Price Graph */}
+
+        <h2 className="text-xl font-semibold text-[#3d3b40]">Rental Trends</h2>
+        <h2>Median Rent (10 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2015-01-01"
+          toDate="2025-12-31"
+          metricTypeId="49"
+        />
+
+        <h2>Median Rent (5 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2020-01-01"
+          toDate="2025-12-31"
+          metricTypeId="49"
+        />
+
+        <h2>Median Rent (1 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="1"
+          fromDate="2023-01-01"
+          toDate="2025-12-31"
+          metricTypeId="49"
+        />
+
+        <h2>Rental Yield (10 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2015-01-01"
+          toDate="2025-12-31"
+          metricTypeId="10"
+        />
+
+        <h2>Rental Yield (5 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="12"
+          fromDate="2020-01-01"
+          toDate="2025-12-31"
+          metricTypeId="10"
+        />
+
+        <h2>Rental Yield (1 years)</h2>
+        <MarketTrendsGraph
+          Token={token}
+          localityID={localityID}
+          Interval="1"
+          fromDate="2023-01-01"
+          toDate="2025-12-31"
+          metricTypeId="10"
+        />
       </div>
     </div>
   );

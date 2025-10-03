@@ -54,13 +54,6 @@ export async function GET(req: Request) {
     $(".yipca-map").eq(1).find("a.expand-map svg").html();
     const mapImage = $(".yipca-map img.image-map").attr("src");
     const svgMap = $(".yipca-map a.expand-map").html(); // Extract SVG HTML
-    // const svgMap = $(".yipca-map").eq(1).html();
-    // const svgMap = $(".yipca-map a.expand-map svg")[0].outerHTML;
-
-    // Debugging log to inspect map data
-    console.log("Map Link:", mapLink); // Should show the map link if it's present
-    console.log("Map Image:", mapImage); // Should show the map image if it's present
-    console.log("SVG Map:", svgMap);
 
     console.log("Full Map HTML:", $(".yipca-map").html()); // Inspect entire map section
 
@@ -111,6 +104,20 @@ export async function GET(req: Request) {
 
     // Extract token
     const yipChartsToken = $("yip-charts").attr("token") || "";
+    const localityID = $("yip-charts").attr("locality-id") || "";
+
+    // Extract all yip-charts with their attributes
+    const yipCharts = $("yip-charts")
+      .map((_, el) => {
+        return {
+          trendType: $(el).attr("trend-type") || null,
+          metricType: $(el).attr("metric-type") || null,
+          localityId: $(el).attr("locality-id") || null,
+          token: $(el).attr("token") || null,
+          yearLength: $(el).attr("year-length") || null,
+        };
+      })
+      .get();
 
     const result = {
       breadcrumbs,
@@ -122,6 +129,7 @@ export async function GET(req: Request) {
       keyMarketData,
       keyDemographics,
       yipChartsToken,
+      localityID,
     };
 
     console.log("result5611", result);

@@ -2,26 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { token } = await req.json();
+    const { token, localityID, interval, fromDate, toDate, metricTypeId } =
+      await req.json();
+
+    console.log("localityID_1", localityID);
+    console.log("localityID_2", token);
 
     const payload = {
       seriesRequestList: [
         {
-          interval: 12,
-          fromDate: "2015-01-01",
-          toDate: "2025-12-31",
-          locationId: "9167",
+          interval: interval,
+          fromDate: fromDate,
+          toDate: toDate,
+          locationId: localityID,
           locationTypeId: 8,
-          metricTypeId: 21,
+          metricTypeId: metricTypeId,
           propertyTypeId: 1,
         },
         {
-          interval: 12,
-          fromDate: "2015-01-01",
-          toDate: "2025-12-31",
-          locationId: "9167",
+          interval: interval,
+          fromDate: fromDate,
+          toDate: toDate,
+          locationId: localityID,
           locationTypeId: 8,
-          metricTypeId: 21,
+          metricTypeId: metricTypeId,
           propertyTypeId: 2,
         },
       ],
